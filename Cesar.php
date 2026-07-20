@@ -1,42 +1,50 @@
 <?php
 
-$alphabetArray = range('a', 'z');
-
-function cesarCypher($userInput, $alphabetArray, $shiftChoice)
+function cesarCypher(string $userInput, array $alphabetArray, int $shiftChoice): string
 {
-
     $resultArray = [];
-    
+    $userInput = strtolower($userInput);
+
     foreach (str_split($userInput) as $character) {
-        
-        if ($character == " ") { 
+        if ($character === " ") {
             $resultArray[] = " ";
             continue;
         }
 
-        $searchInArray = array_search($character, $alphabetArray); 
-        $newIndex = ($searchInArray + $shiftChoice) % count($alphabetArray);  
-        $resultArray[] = $alphabetArray[$newIndex];  
-       
+        $searchInArray = array_search($character, $alphabetArray, true);
+        if ($searchInArray === false) {
+            $resultArray[] = $character;
+            continue;
+        }
+
+        $newIndex = ($searchInArray + $shiftChoice) % count($alphabetArray);
+        $resultArray[] = $alphabetArray[$newIndex];
     }
-    return implode("", $resultArray); 
-  
+
+    return implode("", $resultArray);
+
 }
 
-function cesarDecypher($userInput, $alphabetArray, $shiftChoice)
+function cesarDecypher(string $userInput, array $alphabetArray, int $shiftChoice): string
 {
     $resultArray = [];
     $alphabetCount = count($alphabetArray);
-    
+    $userInput = strtolower($userInput);
+
     foreach (str_split($userInput) as $character) {
-        if ($character == " ") { 
+        if ($character === " ") {
             $resultArray[] = " ";
             continue;
         }
 
-        $searchInArray = array_search($character, $alphabetArray);
+        $searchInArray = array_search($character, $alphabetArray, true);
+        if ($searchInArray === false) {
+            $resultArray[] = $character;
+            continue;
+        }
+
         $newIndex = (($searchInArray - $shiftChoice) % $alphabetCount + $alphabetCount) % $alphabetCount;
-        $resultArray[] = $alphabetArray[$newIndex]; 
+        $resultArray[] = $alphabetArray[$newIndex];
         
     }
     return implode("", $resultArray);

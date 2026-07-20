@@ -1,52 +1,65 @@
 <?php
 
-$alphabetArray = range('a', 'z');
-$morseCode = array('.-', '-...', '-.-.', '-..', '.', '..-.', '--.', '....', '..', '.---', '-.-', '.-..', '--', '-.', '---', '.--.', '--.-', '.-.', '...', '-', '..-', '...-', '.--', '-..-', '-.--', '--..');
+const MORSE_WORDS_SEPARATOR = '   ';
+const MORSE_LETTERS_SEPARATOR = ' ';
 
+function morseCypher(string $userInput): string
+{
+    $morseCode = [
+        'a' => '.-', 'b' => '-...', 'c' => '-.-.', 'd' => '-..', 'e' => '.', 'f' => '..-.',
+        'g' => '--.', 'h' => '....', 'i' => '..', 'j' => '.---', 'k' => '-.-', 'l' => '.-..',
+        'm' => '--', 'n' => '-.', 'o' => '---', 'p' => '.--.', 'q' => '--.-', 'r' => '.-.',
+        's' => '...', 't' => '-', 'u' => '..-', 'v' => '...-', 'w' => '.--', 'x' => '-..-',
+        'y' => '-.--', 'z' => '--..'
+    ];
 
-
-// chiffrage 
-
-if ($encodinUserChoice == ENCODING_CHOICE_ENCODE) {
-    $result = "";
+    $result = '';
+    $i = 0;
     foreach (str_split($userInput) as $character) {
-        if ($character == MORSE_LETTERS_SEPARATOR) { // transforme les espaces en espaces  
-            $result .= MORSE_WORDS_SEPARATOR;
-
+        if ($character === ' ') {
+            if ($i > 0) {
+                $result .= MORSE_WORDS_SEPARATOR;
+            }
+            $i = 0;
             continue;
         }
 
-        $searchInArray = array_search($character, $alphabetArray);
-        $result .= $morseCode[$searchInArray] . MORSE_LETTERS_SEPARATOR;
+        if (isset($morseCode[$character])) {
+            if ($i > 0) {
+                $result .= MORSE_LETTERS_SEPARATOR;
+            }
+            $result .= $morseCode[$character];
+            $i++;
+        }
     }
- 
+
+    return $result;
 }
 
+function morseDecypher(string $userInput): string
+{
+    $morseToAlpha = [
+        '.-' => 'a', '-...' => 'b', '-.-.' => 'c', '-..' => 'd', '.' => 'e', '..-.' => 'f',
+        '--.' => 'g', '....' => 'h', '..' => 'i', '.---' => 'j', '-.-' => 'k', '.-..' => 'l',
+        '--' => 'm', '-.' => 'n', '---' => 'o', '.--.' => 'p', '--.-' => 'q', '.-.' => 'r',
+        '...' => 's', '-' => 't', '..-' => 'u', '...-' => 'v', '.--' => 'w', '-..-' => 'x',
+        '-.--' => 'y', '--..' => 'z'
+    ];
 
-
-
-
-elseif ($encodinUserChoice == ENCODING_CHOICE_DECODE) {
-    $result = "";
-    $words = explode(MORSE_WORDS_SEPARATOR, $userInput); // explode text into arrays of words
-    foreach ($words as $key => $word) {
-        var_dump($word);
-
-
-        foreach (explode(MORSE_LETTERS_SEPARATOR, $word) as $character) { // explode word into arrays of letters 
-
-            $searchInArray = array_search($character, $morseCode); // find a way to know when it's a new letter 
-            $result .= $alphabetArray[$searchInArray];
+    $result = '';
+    $words = explode(MORSE_WORDS_SEPARATOR, $userInput);
+    foreach ($words as $word) {
+        if (!empty($result)) {
+            $result .= ' ';
         }
-
-        if ($key !== array_key_last($words)) {  // ajoute espace si pas dernier mot ; !== (if not)
-            $result .= MORSE_LETTERS_SEPARATOR;
+        $letters = explode(MORSE_LETTERS_SEPARATOR, trim($word));
+        foreach ($letters as $letter) {
+            if (isset($morseToAlpha[$letter])) {
+                $result .= $morseToAlpha[$letter];
+            }
         }
     }
 
-
-
-
-    
+    return $result;
 }
 

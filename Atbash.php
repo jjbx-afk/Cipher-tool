@@ -1,20 +1,31 @@
 <?php
 
-$alphabetArray = range('a', 'z');
-$reverseAlphabet = range('z', 'a');
-
-function atbashCypher($userInput, $alphabetArray, $reverseAlphabet)
+function atbashCypher(string $userInput, array $alphabetArray): string
 {
+    $resultArray = [];
+    $alphabetCount = count($alphabetArray);
 
-    $result = "";
-    foreach (str_split($userInput) as $character) { // découpe l'input en character
-        if ($character == " ") { // transforme les espaces en espaces 
-            $result = " ";
-
+    foreach (str_split($userInput) as $character) {
+        if ($character === " ") {
+            $resultArray[] = " ";
             continue;
         }
-        $searchInArray = array_search($character, $reverseAlphabet); // chercher la valeurs de la lettre dans l'array 
-        $result = $result . $alphabetArray[$searchInArray]; // redonne la lettre selon les valeurs correspandante dans l'array
 
+        $searchInArray = array_search($character, $alphabetArray, true);
+        if ($searchInArray === false) {
+            $resultArray[] = $character;
+            continue;
+        }
+
+        $newIndex = $alphabetCount - 1 - $searchInArray;
+        $resultArray[] = $alphabetArray[$newIndex];
     }
+
+    return implode("", $resultArray);
+}
+
+function atbashDecypher(string $userInput, array $alphabetArray): string
+{
+    // Atbash is symmetric: encoding and decoding are the same operation
+    return atbashCypher($userInput, $alphabetArray);
 }
